@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', 'login');
 
 Auth::routes();
 
@@ -29,5 +27,8 @@ Route::resource('items', App\Http\Controllers\itemsController::class);
 
 
 Route::resource('taxCategories', App\Http\Controllers\tax_categoryController::class);
+
+
+Route::resource('history', App\Http\Controllers\activityController::class);
 
 

@@ -8,11 +8,12 @@ use App\Repositories\itemsRepository;
 use App\Http\Controllers\AppBaseController;
 use App\Models\category;
 use App\Models\item_images;
+use App\Models\itemactivity;
 use App\Models\tax_category;
 use Illuminate\Http\Request;
 use Flash;
 use Response;
-use Intervention\Image\Facades\Image;
+use Illuminate\Support\Carbon;
 
 class itemsController extends AppBaseController
 {
@@ -46,8 +47,8 @@ class itemsController extends AppBaseController
      */
     public function create()
     {
-        $category = category::pluck('name','id');
-        $tax_category = tax_category::pluck('name','id');
+        $category = category::pluck('name','name');
+        $tax_category = tax_category::pluck('name','name');
         return view('items.create', compact('category','tax_category'));
     }
 
@@ -107,13 +108,16 @@ class itemsController extends AppBaseController
     {
         $items = $this->itemsRepository->find($id);
 
+        $category = category::pluck('name','name');
+        $tax_category = tax_category::pluck('name','name');
+
         if (empty($items)) {
             Flash::error('Items not found');
 
             return redirect(route('items.index'));
         }
 
-        return view('items.edit')->with('items', $items);
+        return view('items.edit',compact('category','tax_category'))->with('items', $items);
     }
 
     /**
@@ -133,8 +137,9 @@ class itemsController extends AppBaseController
 
             return redirect(route('items.index'));
         }
-
-        $items = $this->itemsRepository->update($request->all(), $id);
+        $input = $request->all();
+        // dd($input);
+        $items = $this->itemsRepository->update($input, $id);
 
         Flash::success('Items updated successfully.');
 
